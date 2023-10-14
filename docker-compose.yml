@@ -1,0 +1,96 @@
+services:
+  bcore:
+    container_name: bcore
+    build:
+      context: ./BCore
+    environment:
+      - ConnectionStrings:SqlServer=Server=database,1433;Database=master;User=sa;Password=1234.abcd;Trusted_Connection=True;TrustServerCertificate=True;MultiSubnetFailover=True;Integrated Security=false;
+      - MessageBroker:RabbitMq:HostName=message_broker
+      - MessageBroker:RabbitMq:Port=5672
+      - MessageBroker:RabbitMq:UserName=admin
+      - MessageBroker:RabbitMq:Password=1234.abcd
+      - AUTO_MIGRATE=true
+      - POPULATE_DATABASE=true
+      - AccountingSystemsEndpoints:Tokyo=http://tokyo:80/api/Invoice/Map
+      - AccountingSystemsEndpoints:Seoul=http://seoul:80/api/Invoice/Map
+    ports:
+      - 4999:80
+    restart: always
+    depends_on:
+      database:
+        condition: service_healthy
+      message_broker:
+        condition: service_healthy
+  tokyo:
+    container_name: tokyo
+    build:
+      context: ./TokyoSystem
+    ports:
+      - 21000:80
+    restart: always
+  seoul:
+    container_name: seoul
+    build:
+      context: ./SeoulSystem
+    ports:
+      - 22000:80
+    restart: always          
+  ocr_manager:
+    container_name: ocr_manager
+    build:
+      context: ./OCRManager
+    environment:
+      - ConnectionStrings:StorageAccount=DefaultEndpointsProtocol=http;BlobEndpoint=http://blob_storage:19238/devstoreaccount1;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;
+      - Nanonets:Url=https://app.nanonets.com/api/v2
+      - "Nanonets:ApiKey=<REDACTED>"
+      - MessageBroker:RabbitMq:HostName=message_broker
+      - MessageBroker:RabbitMq:Port=5672
+      - MessageBroker:RabbitMq:UserName=admin
+      - MessageBroker:RabbitMq:Password=1234.abcd
+      - BCore:Url=http://bcore:80
+    ports:
+      - 5999:80
+    restart: always
+    depends_on:
+      message_broker:
+        condition: service_healthy 
+      blob_storage:
+        condition: service_started
+  database:
+    container_name: database
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - SA_PASSWORD=1234.abcd
+      - ACCEPT_EULA=Y
+    ports:
+      - 1433:1433
+    restart: always
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 1234.abcd -Q "SELECT 1" || exit 1
+      interval: 30s
+      timeout: 30s
+      retries: 5
+  message_broker: 
+    container_name: message_broker
+    image: rabbitmq:3-management
+    ports:
+      - 15672:15672
+      - 5672:5672
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=1234.abcd
+    restart: always
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 5
+  blob_storage:
+    container_name: blob_storage
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    command: azurite-blob --blobHost 0.0.0.0 --blobPort 19238 -l /data --skipApiVersionCheck
+    ports:
+      - "19238:19238"  
+    volumes:
+      - ./azurite:/data
+    restart: always

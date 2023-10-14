@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: basecore
+  namespace: microfrontends
+spec:
+  selector:
+    matchLabels:
+      app: basecore
+  template:
+    metadata:
+      labels:
+        app: basecore
+    spec:
+      containers:
+      - name: basecore
+        image: nicolesilva.azurecr.io/bcore:latest
+        env:
+          - name: "ConnectionStrings__SqlServer"
+            value: "Server=mssql,1433;Database=master;User=sa;Password=1234.abcd;Trusted_Connection=True;TrustServerCertificate=True;MultiSubnetFailover=True;Integrated Security=false;"
+          - name: "MessageBroker__RabbitMq__HostName"
+            value: rabbitmq
+          - name: "MessageBroker__RabbitMq__Port"
+            value: "5672"
+          - name: "MessageBroker__RabbitMq__UserName"
+            value: admin
+          - name: "MessageBroker__RabbitMq__Password"
+            value: 1234.abcd
+          - name: "AccountingSystemsEndpoints__Tokyo"
+            value: http://as-tokyo:21000/api/Invoice/Map
+          - name: "AccountingSystemsEndpoints__Seoul"
+            value: http://as-seoul:21000/api/Invoice/Map
+          - name: AUTO_MIGRATE
+            value: "true"
+          - name: POPULATE_DATABASE
+            value: "true"
+        resources: {}
+        ports:
+        - name: http
+          containerPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: basecore
+  namespace: microfrontends
+spec:
+  selector:
+    app: basecore
+  ports:
+  - port: 80
+    targetPort: 80
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: basecore
+  namespace: microfrontends
+  annotations:
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      add_header Access-Control-Allow-Origin https://shell.vitorcorreia.me;
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: bcore.vitorcorreia.me
+    http:
+      paths:
+      - pathType: ImplementationSpecific
+        path: "/"
+        backend:
+          service:
+            name: basecore
+            port: 
+              number: 80

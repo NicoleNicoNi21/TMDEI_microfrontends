@@ -1,0 +1,71 @@
+name: Previewer
+on:
+  # Trigger manually
+  workflow_dispatch:
+  
+  push:
+    branches:
+      - main
+    paths:
+      - ./MicroFrontends/projects/previewer
+      - ./github/workflows/previewer.yml
+
+permissions:
+  id-token: write
+  contents: read
+      
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./MicroFrontends
+  
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_IMAGE_NAME: nicolesilva.azurecr.io/previewer:${{ github.sha }}
+        run: |
+          docker build -t $DOCKER_IMAGE_NAME -f ./docker/modules.Dockerfile --build-arg MICROFRONTEND=previewer .
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD nicolesilva.azurecr.io
+          docker push $DOCKER_IMAGE_NAME
+
+      - name: SonarQube Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+        run: |
+          npm install -g sonarqube-scanner
+          sonar-scanner -Dsonar.projectKey=Previewer -Dsonar.sources=projects/previewer/src -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN
+
+      - name: Replace string
+        run: |
+          sed -i "s/#IMAGE_TAG#/${{ github.sha }}/g" ${{ github.workspace }}/manifests/microfrontends/previewer.yaml
+
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Gets K8s context
+        uses: Azure/k8s-set-context@v3.0
+        env:
+          RESOURCE_GROUP: rg-tmdei-project-ne
+          CLUSTER_NAME: aks-tmdei-project-ne
+        with:
+          kubeconfig: ${{ secrets.K8S_KUBECONFIG }}
+        id: login
+
+      - name: Deploy to Kubernetes cluster
+        uses: Azure/k8s-deploy@v4.9
+        with:
+          namespace: microfrontends
+          manifests: |
+            ${{ github.workspace }}/manifests/microfrontends/previewer.yaml

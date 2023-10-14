@@ -1,0 +1,47 @@
+<div id="container" style="width: 100%">
+  <h3 class="text-secondary">Post Invoices</h3>
+  <br />
+  <form [formGroup]="systemForm">
+    <h5>Accounting Tools</h5>
+
+    <input
+      type="radio"
+      id="tokyo"
+      name="accountingSystem"
+      value="tokyo"
+      formControlName="accountingSystem"
+      (change)="onChange($event)"
+    />
+    <label for="tokyo">ToKyo System</label>
+    <input
+      style="margin-left: 10px"
+      type="radio"
+      id="seoul"
+      name="accountingSystem"
+      value="seoul"
+      formControlName="accountingSystem"
+      (change)="onChange($event)"
+    />
+    <label for="seoul">SeOul System</label><br />
+  </form>
+  <button
+    class="btn btn-primary spacing-btn"
+    (click)="getPreviousDocument(currentDocument.documentId)"
+  >
+    Previous Document
+  </button>
+  <button
+    class="btn btn-primary spacing-btn"
+    (click)="getNextDocument(currentDocument.documentId)"
+  >
+    Next Document
+  </button>
+
+  <div style="display: absolute;">
+    <iframe
+      title="sheesh"
+      style="width:100%; height: 560px"
+      [src]="documentSrc"
+    ></iframe>
+  </div>
+</div>

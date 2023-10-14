@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: invoice-general
+  namespace: microfrontends
+spec:
+  selector:
+    matchLabels:
+      app: invoice-general
+  template:
+    metadata:
+      labels:
+        app: invoice-general
+    spec:
+      containers:
+      - name: invoice-general
+        image: nicolesilva.azurecr.io/invoice-general:#IMAGE_TAG#
+        resources: {}
+        ports:
+        - name: http
+          containerPort: 80
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /etc/nginx/conf.d
+          name: nginx-config
+      volumes:
+      - name: nginx-config  
+        configMap:
+          name: frontend-nginx-config
+          items:
+            - key: nginx.conf
+              path: nginx.conf        
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: invoice-general
+  namespace: microfrontends
+spec:
+  selector:
+    app: invoice-general
+  ports:
+  - port: 80
+    targetPort: 80
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: invoice-general
+  namespace: microfrontends
+  annotations:
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      add_header Access-Control-Allow-Origin https://shell.vitorcorreia.me;
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: invoice-general.vitorcorreia.me
+    http:
+      paths:
+      - pathType: ImplementationSpecific
+        path: "/"
+        backend:
+          service:
+            name: invoice-general
+            port: 
+              number: 80

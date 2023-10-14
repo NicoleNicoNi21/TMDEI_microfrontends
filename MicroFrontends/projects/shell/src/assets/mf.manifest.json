@@ -1,0 +1,42 @@
+{
+  "invoiceGeneral": {
+    "remoteEntry": "http://localhost:4203/remoteEntry.js",
+
+    "exposedModule": "./Module",
+    "displayName": "InvoiceForm",
+    "routePath": "posting",
+    "ngModuleName": "InvoiceFormModule"
+  },
+  "buttons": {
+    "remoteEntry": "http://localhost:4203/remoteEntry.js",
+
+    "exposedModule": "./Module",
+    "displayName": "Buttons",
+    "routePath": "buttons",
+    "ngModuleName": "ButtonsModule"
+  },
+  "previewer": {
+    "remoteEntry": "http://localhost:4201/remoteEntry.js",
+
+    "exposedModule": "./Module",
+    "displayName": "Previewer",
+    "routePath": "previewer",
+    "ngModuleName": "PreviewerModule"
+  },
+  "seoul": {
+    "remoteEntry": "http://localhost:4204/remoteEntry.js",
+
+    "exposedModule": "./Module",
+    "displayName": "Seoul",
+    "routePath": "seoul",
+    "ngModuleName": "InvoiceLinesSeoulModule"
+  },
+  "tokyo": {
+    "remoteEntry": "http://localhost:4205/remoteEntry.js",
+    "remoteName": "Tokyo",
+    "exposedModule": "./Module",
+    "displayName": "Tokyo",
+    "routePath": "tokyo",
+    "ngModuleName": "InvoiceLinesTokyoModule"
+  }
+}

@@ -1,0 +1,26 @@
+<div id="container" style="width: 100%">
+  <div class="text-danger" *ngIf="!confirmValue">
+    Total amount is different from the amount in the lines
+  </div>
+  <button
+    type="submit"
+    class="btn btn-primary spacing-btn"
+    (click)="postForm()"
+  >
+    POST
+  </button>
+  <button 
+    type="button" 
+    class="btn btn-primary spacing-btn"
+    (click)="rejectForm()"
+  >
+    REJECT
+  </button>
+  <button
+    type="button"
+    class="btn btn-primary spacing-btn"
+    (click)="saveForm()"
+  >
+    SAVE
+  </button>
+</div>

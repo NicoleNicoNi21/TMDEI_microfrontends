@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ocr-manager
+  namespace: microfrontends
+spec:
+  selector:
+    matchLabels:
+      app: ocr-manager
+  template:
+    metadata:
+      labels:
+        app: ocr-manager
+    spec:
+      containers:
+      - name: ocr-manager
+        image: nicolesilva.azurecr.io/ocr-manager:latest
+        env:
+          - name: ConnectionStrings__StorageAccount
+            value: <REDACTED>
+          - name: Nanonets__Url
+            value: https://app.nanonets.com/api/v2
+          - name: Nanonets__ApiKey
+            value: <REDACTED>
+          - name: MessageBroker__RabbitMq__HostName
+            value: rabbitmq
+          - name: MessageBroker__RabbitMq__Port
+            value: "5672"
+          - name: MessageBroker__RabbitMq__UserName
+            value: admin
+          - name: MessageBroker__RabbitMq__Password
+            value: 1234.abcd
+          - name: BCore__Url
+            value: http://basecore:80
+        resources: {}
+        ports:
+        - name: http
+          containerPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ocr-manager
+  namespace: microfrontends
+spec:
+  selector:
+    app: ocr-manager
+  ports:
+  - port: 80
+    targetPort: 80
+

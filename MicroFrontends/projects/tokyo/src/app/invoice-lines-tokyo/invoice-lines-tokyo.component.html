@@ -1,0 +1,111 @@
+<div id="container" style="width: 100%;">
+  <div >
+    <form
+      *ngIf="invoiceForm"
+      [formGroup]="invoiceForm"
+      class="text-left border border-light p-5"
+      
+    >
+    <!-- (ngSubmit)="postForm()" -->
+      <div formArrayName="invoiceLines">
+        <div
+          *ngFor="
+            let invoiceLinesGroup of invoiceLines?.controls;
+            let i = index
+          "
+          [formGroupName]="i"
+        >
+          <h5 id="id">Line {{ i + 1 }}</h5>
+
+          <div class="border-div">
+            <div class="row mb-4">
+              <div class="col-6">
+                <label for="accountCode" class="mb-1">Account Code *</label>
+                <input
+                  id="accountCode"
+                  formControlName="accountCode"
+                  type="text"
+                  class="form-control"
+                  placeholder="Enter accountCode"
+                />
+              </div>
+              <div class="col-6">
+                <label for="costCenter" class="mb-1">Cost Center</label>
+                <input
+                  id="costCenter"
+                  formControlName="costCenter"
+                  type="text"
+                  class="form-control"
+                  placeholder="Enter costCenter"
+                />
+              </div>
+            </div>
+            <div class="row mb-4">
+              <div class="col-6">
+                <label for="amount" class="mb-1">Amount *</label>
+                <input
+                  id="amount"
+                  formControlName="amount"
+                  type="number"
+                  class="form-control"
+                  placeholder="Enter amount"
+                  (ngModelChange)="vatValueCalculation($event, i)"
+                />
+              </div>
+              <div class="col-6">
+                <label for="vat" class="mb-1">VAT *</label>
+                <select
+                  id="vat"
+                  formControlName="vat"
+                  class="form-control"
+                  (ngModelChange)="vatValueCalculation($event, i)"
+                >
+                  <option *ngFor="let v of vat" [ngValue]="v.percentage">
+                    {{ v.name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="row mb-4">
+              <div class="col-6">
+                <label for="vatAmount" class="mb-1">Vat Amount</label>
+                <input
+                  id="vatAmount"
+                  formControlName="vatAmount"
+                  type="text"
+                  class="form-control"
+                  placeholder="VAT %"
+                  disabled
+                />
+              </div>
+              <div class="col-6">
+                <label for="description" class="mb-1">Description</label>
+                <input
+                  id="description"
+                  formControlName="description"
+                  type="text"
+                  class="form-control"
+                  placeholder="Enter description"
+                />
+              </div>
+            </div>
+            <button
+              class="btn btn-primary spacing-btn"
+              (click)="removeCurrentInvoiceLine(i)"
+            >
+              -
+            </button>
+          </div>
+        </div>
+        <button
+          class="btn btn-primary spacing-btn"
+          (click)="addNewInvoiceLine()"
+        >
+          +
+        </button>
+      </div>
+    </form>
+  </div>
+ <!--  {{ invoiceForm.value | json }}
+  <div>PAROU</div> -->
+</div>

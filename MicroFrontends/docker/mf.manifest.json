@@ -1,0 +1,43 @@
+{
+    "invoiceGeneral": {
+      "remoteEntry": "https://invoice-general.vitorcorreia.me/remoteEntry.js",
+  
+      "exposedModule": "./Module",
+      "displayName": "InvoiceForm",
+      "routePath": "posting",
+      "ngModuleName": "InvoiceFormModule"
+    },
+    "buttons": {
+      "remoteEntry": "https://invoice-general.vitorcorreia.me/remoteEntry.js",
+  
+      "exposedModule": "./Module",
+      "displayName": "Buttons",
+      "routePath": "buttons",
+      "ngModuleName": "ButtonsModule"
+    },
+    "previewer": {
+      "remoteEntry": "https://previewer.vitorcorreia.me/remoteEntry.js",
+  
+      "exposedModule": "./Module",
+      "displayName": "Previewer",
+      "routePath": "previewer",
+      "ngModuleName": "PreviewerModule"
+    },
+    "seoul": {
+      "remoteEntry": "https://seoul-system.vitorcorreia.me/remoteEntry.js",
+  
+      "exposedModule": "./Module",
+      "displayName": "Seoul",
+      "routePath": "seoul",
+      "ngModuleName": "InvoiceLinesSeoulModule"
+    },
+    "tokyo": {
+      "remoteEntry": "https://tokyo-system.vitorcorreia.me/remoteEntry.js",
+      "remoteName": "Tokyo",
+      "exposedModule": "./Module",
+      "displayName": "Tokyo",
+      "routePath": "tokyo",
+      "ngModuleName": "InvoiceLinesTokyoModule"
+    }
+  }
+  

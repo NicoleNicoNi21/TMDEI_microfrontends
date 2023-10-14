@@ -1,0 +1,18 @@
+@startuml
+
+actor User
+
+
+User -> Frontend : Uploads a PDF document
+Frontend -> BCore : Registers document and gets \ngenerated ID
+Frontend -> FileStorage : Saves file with generated ID
+Frontend -> BCore : Updates document state to PENDING
+
+queue MessageBroker
+BCore -> MessageBroker : (event)\nIssues message for document analysis
+OCRManager -> MessageBroker : (event)\nRetrieves message for document analysis
+OCRManager -> FileStorage : Gets file data
+OCRManager -> Nanonets :  Submits file for analysis
+OCRManager -> BCore : Updates invoice with detected information
+
+@enduml

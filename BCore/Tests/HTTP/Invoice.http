@@ -1,0 +1,195 @@
+@base_url = http://localhost:4999
+@document_id = 2d23c159-9724-492d-a6fa-277bc544b754
+
+# @name list_documents
+GET {{base_url}}/api/Invoice/List
+
+###
+
+# @name get_documents
+GET {{base_url}}/api/Invoice
+
+###
+
+# @name get_document
+GET {{base_url}}/api/Invoice/{{document_id}}
+
+###
+
+@customer_id = "4f5e6b4f-942d-46c5-fa9b-08db496d35ad"
+# @name register_document
+POST {{base_url}}/api/Invoice
+Content-Type: application/json
+
+{
+    "AccountSystemType": "XPTO",
+    "Customer": {
+        "Id": {{customer_id}},
+    },
+    "FileRelativePath": "/xpto"
+}
+
+###
+
+# @name update_document_state
+PUT {{base_url}}/api/Invoice/BookingStatus/{{document_id}}?status=Pending
+
+###
+
+# @name save_document
+POST {{base_url}}/api/Invoice/Save
+Content-Type: application/json
+
+{
+  "documentId": "2d23c159-9724-492d-a6fa-277bc544b754",
+  "number": "0011",
+  "totalAmount": 10.0,
+  "currency": "EUR",
+  "transactionDate": "0001-01-01T00:00:00",
+  "dueDate": "0001-01-01T00:00:00",
+  "description": "Boa sam!",
+  "invoiceLines": [
+    {
+    "accountCode": "200 - PAINTMATERIALS",
+    "costCenter":"Osaka Paint Center",
+    "amount":{
+      "finalValue": 5
+      },
+    "vat":{"name": "AWAT 20%", "percentage": "0.2"},
+    "vatAmount":"1",
+    "description":"Just a test",
+    },
+    {
+    "accountCode": "300 - MATERIALS",
+    "costCenter":"KASA Paint Center",
+    "amount":{
+      "finalValue": 5
+      },
+    "vat":{"name": "AWAT 20%", "percentage": "0.2"},
+    "vatAmount":"1",
+    "description":"Just a test2",
+    }
+  ],
+  "bookingStatus": 1,
+  "accountSystemType": "tokyo",
+  "customer": {
+    "id": "4f5e6b4f-942d-46c5-fa9b-08db496d35ad",
+    "iban": "LU2800194006447500003",
+    "name": "Mike Wazowski",
+    "code": "1"
+  },
+  "fileRelativePath": "tokyo/2d23c159-9724-492d-a6fa-277bc544b754.pdf"
+}
+###
+
+# @name reject_document
+POST {{base_url}}/api/Invoice/Reject/{{document_id}}
+
+###
+
+# @name post_document
+POST {{base_url}}/api/Invoice/Post/{{document_id}}
+Content-Type: application/json
+
+{
+  "documentId": "2d23c159-9724-492d-a6fa-277bc544b754",
+  "number": "0011",
+  "totalAmount": 10.0,
+  "currency": "EUR",
+  "transactionDate": "0001-01-01T00:00:00",
+  "dueDate": "0001-01-01T00:00:00",
+  "description": "Boa sam!",
+  "invoiceLines": [
+    {
+    "accountCode": "200 - PAINTMATERIALS",
+    "costCenter":"Osaka Paint Center",
+    "amount":{
+      "finalValue": 5
+      },
+    "vat":{"name": "AWAT 20%", "percentage": "0.2"},
+    "vatAmount":"1",
+    "description":"Just a test",
+    },
+    {
+    "accountCode": "300 - MATERIALS",
+    "costCenter":"KASA Paint Center",
+    "amount":{
+      "finalValue": 5
+      },
+    "vat":{"name": "AWAT 20%", "percentage": "0.2"},
+    "vatAmount":"1",
+    "description":"Just a test2",
+    }
+  ],
+  "bookingStatus": 4,
+  "accountSystemType": "tokyo",
+  "customer": {
+    "id": "4f5e6b4f-942d-46c5-fa9b-08db496d35ad",
+    "iban": "LU2800194006447500003",
+    "name": "Mike Wazowski",
+    "code": "1"
+  },
+  "fileRelativePath": "tokyo/2d23c159-9724-492d-a6fa-277bc544b754.pdf"
+}
+
+
+###
+POST http://localhost:21000/api/Invoice/Map
+Content-Type: application/json
+
+{
+    "DocumentId": "2d23c159-9724-492d-a6fa-277bc544b754",
+    "Number": "0011",
+    "TotalAmount": 10.0,
+    "Currency": "EUR",
+    "TransactionDate": "0001-01-01T00:00:00",
+    "DueDate": "0001-01-01T00:00:00",
+    "Description": "Boa sam!",
+    "InvoiceLines": [
+        {
+            "AccountCode": "200 - PAINTMATERIALS",
+            "Item": null,
+            "CostCenter": "Osaka Paint Center",
+            "Location": null,
+            "Department": null,
+            "Amount": {
+                "UnitPrice": 0.0,
+                "Quantity": 0,
+                "FinalValue": 5.0
+            },
+            "Vat": {
+                "Name": "AWAT 20%",
+                "Percentage": 0.2
+            },
+            "VatAmount": 1.0,
+            "Description": "Just a test"
+        },
+        {
+            "AccountCode": "300 - MATERIALS",
+            "Item": null,
+            "CostCenter": "KASA Paint Center",
+            "Location": null,
+            "Department": null,
+            "Amount": {
+                "UnitPrice": 0.0,
+                "Quantity": 0,
+                "FinalValue": 5.0
+            },
+            "Vat": {
+                "Name": "AWAT 20%",
+                "Percentage": 0.2
+            },
+            "VatAmount": 1.0,
+            "Description": "Just a test2"
+        }
+    ],
+    "BookingStatus": 4,
+    "AccountSystemType": "tokyo",
+    "Customer": {
+        "Id": "4f5e6b4f-942d-46c5-fa9b-08db496d35ad",
+        "Iban": "LU2800194006447500003",
+        "Name": "Mike Wazowski",
+        "Code": "1"
+    },
+    "FileRelativePath": "tokyo/2d23c159-9724-492d-a6fa-277bc544b754.pdf"
+}

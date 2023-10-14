@@ -1,0 +1,227 @@
+<div id="container" style="width: 100%;">
+      <div>
+        <div class="mb-4 border-div customer-div">
+          <label for="customer" class="mb-1">Customer *</label>
+          <select id="customer" [formControl]="customer" class="form-control">
+            <option *ngFor="let cust of customerList" [ngValue]="cust.id">
+              {{ cust.code }} - {{ cust.name }}
+            </option>
+          </select>
+          <button
+            *ngIf="!showAddCustomer"
+            class="btn btn-primary spacing-btn"
+            (click)="toggleAddCustomer()"
+          >
+            New Customer
+          </button>
+          <div *ngIf="showAddCustomer">
+            <form
+              [formGroup]="customerForm"
+              (ngSubmit)="addNewCustomer(customerForm.value)"
+            >
+              <label for="name" class="mb-1">Name *</label>
+              <input
+                id="name"
+                formControlName="name"
+                type="text"
+                class="form-control"
+                placeholder="Enter Name"
+              />
+              <label
+                *ngIf="
+                  customerForm.controls['name'].touched &&
+                  customerForm.controls['name'].invalid
+                "
+                class="text-danger"
+              >
+                Field is required
+              </label>
+              <br />
+              <label for="iban" class="mb-1">Iban *</label>
+              <input
+                id="iban"
+                formControlName="iban"
+                type="text"
+                class="form-control"
+                placeholder="Enter Iban"
+              />
+              <label
+                *ngIf="
+                  customerForm.controls['iban'].touched &&
+                  customerForm.controls['iban'].invalid
+                "
+                class="text-danger"
+              >
+                Field is required </label
+              ><br />
+              <label for="code" class="mb-1">Code *</label>
+              <input
+                id="code"
+                formControlName="code"
+                type="text"
+                class="form-control"
+                placeholder="Enter Code"
+              />
+              <label
+                *ngIf="
+                  customerForm.controls['code'].touched &&
+                  customerForm.controls['code'].invalid
+                "
+                class="text-danger"
+              >
+                Field is required </label
+              ><br />
+    
+              <!-- This button needs to put new customer on the backend and request new list of customer to update dropdown above and also hide this div -->
+              <button
+                class="btn btn-primary spacing-btn"
+                (click)="addNewCustomer(customerForm.value)"
+                [disabled]="customerForm.invalid"
+              >
+                Add
+              </button>
+              <button
+                class="btn btn-primary spacing-btn"
+                (click)="toggleAddCustomer()"
+              >
+                Cancel
+              </button>
+            </form>
+          </div>
+        </div>
+        <form
+          *ngIf="invoiceForm"
+          [formGroup]="invoiceForm"
+          class="text-left border border-light p-5"
+          (ngSubmit)="postForm()"
+        >
+          <div class="mb-4">
+            <label for="invoiceNumber" class="mb-1">Invoice Number</label>
+            <input
+              id="invoiceNumber"
+              formControlName="invoiceNumber"
+              type="text"
+              class="form-control"
+              placeholder="Enter Invoice Number"
+            />
+            <label
+              *ngIf="
+                invoiceForm.controls['invoiceNumber'].touched &&
+                invoiceForm.controls['invoiceNumber'].invalid
+              "
+              class="text-danger"
+            >
+              Field is required
+            </label>
+          </div>
+    
+          <div class="row mb-4">
+            <div class="col-6">
+              <label for="amount" class="mb-1">Amount</label>
+              <input
+                id="amount"
+                formControlName="amount"
+                type="number"
+                class="form-control"
+                placeholder="Enter Amount"
+              />
+              <!-- (ngModelChange)="confirmAmount()" -->
+              <label
+                *ngIf="
+                  invoiceForm.controls['amount'].touched &&
+                  invoiceForm.controls['amount'].invalid
+                "
+                class="text-danger"
+              >
+                Field is required
+              </label>
+            </div>
+            <div class="col-6">
+              <label for="currency" class="mb-1">Currency *</label>
+              <select
+                id="currency"
+                formControlName="currency"
+                class="form-control"
+                (change)="changeCurrency($event)"
+              >
+                <option *ngFor="let cur of currency" [ngValue]="cur">
+                  {{ cur }}
+                </option>
+              </select>
+              <label
+                *ngIf="
+                  invoiceForm.controls['currency'].touched &&
+                  invoiceForm.controls['currency'].invalid
+                "
+                class="text-danger"
+              >
+                Field cannot is required
+              </label>
+            </div>
+          </div>
+    
+          <div class="mb-4">
+            <label for="transactionDate" class="mb-1">Transaction Date *</label>
+            <input
+              id="transactionDate"
+              formControlName="transactionDate"
+              type="date"
+              class="form-control"
+              placeholder="Enter transactionDate"
+            />
+            <label
+              *ngIf="
+                invoiceForm.controls['transactionDate'].touched &&
+                invoiceForm.controls['transactionDate'].invalid &&
+                invoiceForm.controls['transactionDate'].errors.required
+              "
+              class="text-danger"
+            >
+              Field is required
+            </label>
+          </div>
+    
+          <div class="mb-4">
+            <label for="invoiceDescription" class="mb-1">Invoice Description</label>
+            <input
+              id="invoiceDescription"
+              formControlName="invoiceDescription"
+              type="text"
+              class="form-control"
+              placeholder="Enter Invoice Description"
+            />
+            <label
+              *ngIf="
+                invoiceForm.controls['invoiceDescription'].touched &&
+                invoiceForm.controls['invoiceDescription'].invalid
+              "
+              class="text-danger"
+            >
+              Field is required
+            </label>
+          </div>
+          <!-- <div class="text-danger" *ngIf="!confirmValue">
+            Total amount is different from the amount in the lines
+          </div> -->
+          <!-- <button
+            type="submit"
+            class="btn btn-primary spacing-btn"
+            (click)="postForm()"
+            [disabled]="invoiceForm.invalid"
+          >
+            POST
+          </button>
+          <button type="reset" class="btn btn-primary spacing-btn">REJECT</button>
+          <button
+            type="button"
+            class="btn btn-primary spacing-btn"
+            (click)="saveForm()"
+          >
+            SAVE
+          </button> -->
+        </form>
+      </div>
+    <!-- {{ invoiceForm.value | json }}
+    <div>PAROU</div>
+    {{ customer.value | json  }} -->
+</div>

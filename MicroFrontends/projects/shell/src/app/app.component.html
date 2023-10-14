@@ -1,0 +1,36 @@
+<div class="container">
+  <nav class="navbar navbar-expand navbar-light bg-light">
+    <a class="navbar-brand">Pre-Accounting SYSTEM</a>
+    <ul class="nav nav-pills">
+      <li>
+        <a class="nav-link" routerLinkActive="active" routerLink="/">Home</a>
+      </li>
+      <li>
+        <a class="nav-link" routerLinkActive="active" routerLink="/posting"
+          >Post Invoices</a
+        >
+      </li>
+    </ul>
+  </nav>
+  <router-outlet></router-outlet>
+  <div class="container color-div">
+    <div class="flex-child">
+      <router-outlet name="previewer"></router-outlet>
+    </div>
+    <div
+      class="flex-child"
+      style="height: 560px; overflow: auto; margin-top: 180px"
+    >
+      <router-outlet name="invoiceGeneral"></router-outlet>
+      <div *ngIf="receivedData" >
+        <ng-container *ngIf="receivedData.detail === 'tokyo'">
+          <router-outlet name="tokyo"></router-outlet>
+        </ng-container>
+        <ng-container *ngIf="receivedData.detail === 'seoul'">
+          <router-outlet name="seoul"></router-outlet
+        ></ng-container>
+      </div>
+      <router-outlet name="buttons"></router-outlet>
+    </div>
+  </div>
+</div>

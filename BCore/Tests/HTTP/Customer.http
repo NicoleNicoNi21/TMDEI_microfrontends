@@ -1,0 +1,22 @@
+@base_url = http://localhost:4999
+@customer_id = 4f5e6b4f-942d-46c5-fa9b-08db496d35ad
+
+# @name get_customers
+GET {{base_url}}/api/Customer
+
+###
+
+# @name get_customer
+GET {{base_url}}/api/Customer/{{customer_id}}
+
+###
+
+# @name create_customer
+POST {{base_url}}/api/Customer
+Content-Type: application/json
+
+{
+    "Iban": "LU2800194006447500003",
+    "Name": "Mike Wazowski",
+    "Code": "1"
+}

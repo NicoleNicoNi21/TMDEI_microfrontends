@@ -1,0 +1,43 @@
+name: SeoulSystem
+on:
+  # Trigger manually
+  workflow_dispatch:
+  
+  push:
+    branches:
+      - main
+    paths:
+      - ./SeoulSystem/
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./SeoulSystem
+  
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_IMAGE_NAME: nicolesilva.azurecr.io/seoul-system:latest
+        run: |
+          docker build -t $DOCKER_IMAGE_NAME .
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD nicolesilva.azurecr.io
+          docker push $DOCKER_IMAGE_NAME
+
+      - name: SonarQube Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+        run: |
+          dotnet tool install --global dotnet-sonarscanner
+          dotnet sonarscanner begin /k:"SeoulSystem" /d:sonar.host.url="$SONAR_HOST_URL" /d:sonar.login="$SONAR_TOKEN"
+          dotnet build
+          dotnet sonarscanner end /d:sonar.login="$SONAR_TOKEN"
